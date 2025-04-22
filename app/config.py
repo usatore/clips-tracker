@@ -1,9 +1,10 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class Settings(BaseSettings):
     YOUTUBE_API_KEY: str
-    CSV_FILENAME: str
+
+    INSTAGRAM_USERNAME: str
+    INSTAGRAM_PASSWORD: str
 
     model_config = SettingsConfigDict(
         env_file='.env',
@@ -11,7 +12,4 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-
-
 settings = Settings()
-
