@@ -31,31 +31,15 @@ def is_before_date(published_at, user_date_str: str, is_timestamp: bool = False)
         return False
 
 
-def save_to_csv(filename: str, rows: list[list], headers: list[str], append: bool = False):
-    """
-    Сохраняет данные в CSV.
+def init_csv_file(filename: str, headers: list[str]):
+    """Создаёт CSV-файл с заголовками."""
+    with open(filename, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
 
-    :param filename: имя CSV-файла
-    :param rows: список строк для записи (каждая строка — список значений)
-    :param headers: список заголовков
-    :param append: добавлять в файл (True) или перезаписать (False)
-    """
-    mode = 'a' if append else 'w'
-    file_empty = False
 
-    try:
-        with open(filename, 'r', encoding='utf-8') as f:
-            file_empty = f.readline() == ''
-    except FileNotFoundError:
-        file_empty = True
-
-    with open(filename, mode=mode, encoding='utf-8', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-
-        if not append or file_empty:
-            writer.writerow(headers)
-
-        for row in rows:
-            writer.writerow(row)
-
-    print(f"CSV файл обновлён: {filename}")
+def append_csv_chunk(filename: str, rows: list[list]):
+    """Добавляет строки в существующий CSV без заголовков."""
+    with open(filename, 'a', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerows(rows)

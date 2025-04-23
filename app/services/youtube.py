@@ -1,7 +1,7 @@
 from datetime import datetime
 import isodate
 from app.clients.youtube import youtube
-from app.services.utils import is_before_date, save_to_csv
+from app.services.utils import is_before_date, init_csv_file, append_csv_chunk
 
 
 def get_uploads_playlist_id(handle: str) -> str:
@@ -33,8 +33,10 @@ def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
     filename = f"{handle}_youtube_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
     headers = ['Ссылка', 'Просмотры', 'Лайки', 'Дата публикации']
 
+    init_csv_file(filename, headers)
+
     next_page_token = None
-    shorts_batch = []
+    batch = []
 
 
     while True:
@@ -58,19 +60,19 @@ def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
                 video_id = video['id']
                 url = f"https://youtube.com/shorts/{video_id}"
                 stats = video.get('statistics', {})
-                views = stats.get('viewCount', '0')
-                likes = stats.get('likeCount', '0')
+                views = stats.get('viewCount', 'No info')
+                likes = stats.get('likeCount', 'No info')
                 published = video.get('snippet', {}).get('publishedAt', '')[:10]
 
-                shorts_batch.append([url, views, likes, published])
+                batch.append([url, views, likes, published])
 
-            if len(shorts_batch) == batch_size:
-                save_to_csv(filename, shorts_batch, headers, append=True)
-                shorts_batch.clear()
+            if len(batch) == batch_size:
+                append_csv_chunk(filename, batch)
+                batch.clear()
 
         next_page_token = response.get('nextPageToken')
         if not next_page_token:
             break
 
-    if shorts_batch:
-        save_to_csv(filename, shorts_batch, headers, append=True)
+    if batch:
+        append_csv_chunk(filename, batch)
