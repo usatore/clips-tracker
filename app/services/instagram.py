@@ -3,7 +3,7 @@ from app.services.utils import save_to_csv, is_before_date
 from app.clients.instagram import instagram
 
 
-def fetch_and_save_instagram_reels(username: str, user_date_str: str):
+def collect_ig_clips(username: str, user_date_str: str):
     try:
         user_id = instagram.user_id_from_username(username)
         medias = instagram.user_clips(user_id)  # Получаем Reels

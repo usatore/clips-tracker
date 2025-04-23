@@ -28,7 +28,7 @@ def is_shorts(video: dict) -> bool:
         return False
 
 
-def collect_clips_to_csv(handle: str, user_date_str: str, batch_size: int = 10):
+def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
     uploads_playlist_id = get_uploads_playlist_id(handle)
     filename = f"{handle}_youtube_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 
