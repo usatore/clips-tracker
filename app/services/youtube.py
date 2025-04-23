@@ -3,6 +3,13 @@ import isodate
 from app.clients.youtube import youtube
 from app.services.utils import is_before_date, init_csv_file, append_csv_chunk
 
+def is_shorts(video: dict) -> bool:
+    try:
+        duration = video['contentDetails']['duration']
+        seconds = isodate.parse_duration(duration).total_seconds()
+        return seconds < 62
+    except Exception:
+        return False
 
 def get_uploads_playlist_id(handle: str) -> str:
     request = youtube.channels().list(part='contentDetails', forHandle=handle)
@@ -17,15 +24,6 @@ def fetch_videos_chunk(video_ids: list[str]) -> list[dict]:
     )
     return request.execute().get('items', [])
 
-
-def is_shorts(video: dict) -> bool:
-    """Проверяет, является ли видео шортсом (меньше 62 секунд)."""
-    try:
-        duration = video['contentDetails']['duration']
-        seconds = isodate.parse_duration(duration).total_seconds()
-        return seconds < 62
-    except Exception:
-        return False
 
 
 def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
