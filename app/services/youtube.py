@@ -31,10 +31,11 @@ def is_shorts(video: dict) -> bool:
 def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
     uploads_playlist_id = get_uploads_playlist_id(handle)
     filename = f"{handle}_youtube_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    headers = ['Ссылка', 'Просмотры', 'Лайки', 'Дата публикации']
 
     next_page_token = None
     shorts_batch = []
-    headers = ['Ссылка', 'Просмотры', 'Лайки', 'Дата публикации', 'Длительность']
+
 
     while True:
         request = youtube.playlistItems().list(
@@ -60,9 +61,8 @@ def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
                 views = stats.get('viewCount', '0')
                 likes = stats.get('likeCount', '0')
                 published = video.get('snippet', {}).get('publishedAt', '')[:10]
-                duration = video.get('contentDetails', {}).get('duration', '')
 
-                shorts_batch.append([url, views, likes, published, duration])
+                shorts_batch.append([url, views, likes, published])
 
             if len(shorts_batch) == batch_size:
                 save_to_csv(filename, shorts_batch, headers, append=True)
