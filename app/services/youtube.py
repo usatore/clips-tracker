@@ -2,6 +2,7 @@ from datetime import datetime
 import isodate
 from app.clients.youtube import youtube
 from app.services.utils import is_before_date, init_csv_file, append_csv_chunk
+from app.config import settings
 
 def is_shorts(video: dict) -> bool:
     try:
@@ -26,7 +27,7 @@ def fetch_videos_chunk(video_ids: list[str]) -> list[dict]:
 
 
 
-def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 10):
+def collect_yt_clips(handle: str, user_date_str: str, batch_size: int = 25):
     uploads_playlist_id = get_uploads_playlist_id(handle)
     filename = f"{handle}_youtube_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
     headers = ['Ссылка', 'Просмотры', 'Лайки', 'Дата публикации']

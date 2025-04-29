@@ -1,9 +1,12 @@
 from app.services.utils import init_csv_file, append_csv_chunk, is_before_date
 from datetime import datetime
-from app.clients.instagram import instagram
+from app.clients.instagram import login_to_instagram
 
 
 def collect_ig_clips(username: str, user_date_str: str, batch_size: int = 10):
+
+    instagram = login_to_instagram()
+
     user = instagram.user_info_by_username_v1(username)
     user_id = user.pk
     medias = instagram.user_medias_v1(user_id)
